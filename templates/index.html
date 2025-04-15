@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Extrator de E-mails</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">
+                    <img src="https://www.idealprepara.com.br/assets/images/logo.png" alt="Logo" height="40">
+                    <br>Extrator de E-mails por Extensão
+                </h2>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Selecione os arquivos <strong>.txt</strong>:</label>
+                        <input type="file" name="arquivos" class="form-control" multiple required>
+                        <div class="form-text">Você pode selecionar múltiplos arquivos de uma vez.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Palavras-chave nos e-mails:</label>
+                        <input type="text" name="extensoes" class="form-control" placeholder="Ex: adv, advocacia, associados" required>
+                        <div class="form-text">Separe por vírgulas.</div>
+                    </div>
+
+                    <div class="d-grid mb-4">
+                        <button type="submit" class="btn btn-success btn-lg">🔍 Iniciar Extração</button>
+                    </div>
+                </form>
+
+                {% if arquivos_resultado %}
+                <div class="mt-4">
+                    <h5>📄 Últimos arquivos extraídos:</h5>
+                    <ul class="list-group">
+                        {% for arq in arquivos_resultado %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ arq }}
+                            <a href="{{ url_for('download', nome_arquivo=arq) }}" class="btn btn-sm btn-outline-primary">⬇ Baixar</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if historico %}
+                <div class="mt-5">
+                    <h5>📊 Histórico de Extrações</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Arquivo</th>
+                                    <th>Data e Hora</th>
+                                    <th>Total de E-mails</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in historico %}
+                                <tr>
+                                    <td>{{ item.arquivo }}</td>
+                                    <td>{{ item.data }}</td>
+                                    <td>{{ item.total }}</td>
+                                    <td>
+                                        <a href="{{ url_for('download', nome_arquivo=item.arquivo) }}" class="btn btn-sm btn-primary">⬇ Baixar</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
+                <hr class="my-4">
+                <div class="text-center text-muted">
+                    <small>© 2025 - Grupo Ideal | Sistema de Extração de E-mails</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
